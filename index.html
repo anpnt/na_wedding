@@ -3,11 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save The Date Trường An & Ý Nhi</title>
+    <title>Save The Date - Trường An & Ý Nhi</title>
+    
+    <!-- Meta tags cho Social Media Thumbnail (Zalo, Facebook, iMessage) -->
+    <meta property="og:title" content="Save The Date - Trường An & Ý Nhi">
+    <meta property="og:description" content="Trân trọng báo tin vui lễ thành hôn của Trường An & Ý Nhi. Rất hân hạnh được đón tiếp!">
+    <!-- THAY LINK ẢNH SOCIAL THUMBNAIL CỦA BẠN VÀO ĐÂY -->
+    <meta property="og:image" content="https://raw.githubusercontent.com/anpnt/na_wedding/dev/DSC08912.JPG">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+
     <!-- Google Fonts cho typography đẹp -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Great+Vibes&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -77,18 +87,6 @@
             box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
         }
         
-        .btn-secondary {
-            background-color: transparent;
-            color: #555;
-            font-size: 12px;
-            border: 1px solid #ccc;
-            padding: 8px 16px;
-            border-radius: 20px;
-        }
-        .btn-secondary:hover {
-            background-color: #fff;
-        }
-
         /* Loading font workaround */
         .font-loader {
             position: absolute;
@@ -106,8 +104,7 @@
         <span style="font-family: 'Montserrat'">Load Sans</span>
     </div>
 
-    <!-- ÂM NHẠC: Thay link src bên dưới bằng link file mp3 Beautiful in White của bạn -->
-    <!-- Hiện tại đang dùng một bản Piano lãng mạn mẫu (Royalty Free) -->
+    <!-- ÂM NHẠC -->
     <audio id="weddingMusic" loop>
         <source src="https://raw.githubusercontent.com/anpnt/na_wedding/dev/442fca343815beee.mp3" type="audio/mpeg">
         Trình duyệt của bạn không hỗ trợ phát nhạc.
@@ -136,12 +133,21 @@
         
         // State
         let isOpened = false;
-        let animationFrame = 0;
         let coverOpacity = 1;
-        let contentY = 100; 
         let hearts = []; 
         let fallingHearts = []; 
         let isRainingHearts = false; 
+
+        // Load Thumbnail Image
+        const coupleImage = new Image();
+        let isImageLoaded = false;
+        // THAY LINK ẢNH THUMBNAIL (CÔ DÂU CHÚ RỂ) TRÊN THIỆP CỦA BẠN VÀO ĐÂY
+        coupleImage.src = 'https://raw.githubusercontent.com/anpnt/na_wedding/dev/DSC08912.JPG';
+        coupleImage.crossOrigin = "Anonymous"; // Giúp hỗ trợ tải ảnh xuống khi có CORS
+        coupleImage.onload = () => {
+            isImageLoaded = true;
+            render();
+        };
 
         // Màu sắc chủ đạo
         const COLORS = {
@@ -149,7 +155,7 @@
             gold: '#C5A059', 
             darkText: '#2C2C2C',
             accent: '#E6D2B5', 
-            envelope: '#FADADD', // Đổi màu nền phong bì sang Hồng Pastel (Pale Pink)
+            envelope: '#FADADD', // Màu nền phong bì sang Hồng Pastel
             envelopeDark: '#E5B3BB', // Màu tối hơn cho nếp gấp
             envelopeLight: '#FCE6EE', // Màu sáng hơn
             heartRed: '#8B0000', 
@@ -193,7 +199,7 @@
             ctx.stroke();
         }
 
-        // Hàm vẽ hoa lá cách điệu (Procedural)
+        // Hàm vẽ hoa lá cách điệu
         function drawFlourish(ctx, x, y, scale, rotation) {
             ctx.save();
             ctx.translate(x, y);
@@ -266,18 +272,17 @@
         }
 
         // --- HIỆU ỨNG MƯA TRÁI TIM ---
-        
         function createFallingHeart() {
             const colors = [COLORS.heartRed, COLORS.heartGold, COLORS.heartPink];
             return {
                 x: Math.random() * REAL_WIDTH,
-                y: -50, // Bắt đầu từ trên cao hơn màn hình
-                size: Math.random() * 25 + 10, // Kích thước đa dạng
-                speedY: Math.random() * 3 + 1.5, // Tốc độ rơi
-                speedX: (Math.random() - 0.5) * 3, // Gió nhẹ
-                opacity: Math.random() * 0.5 + 0.3, // Độ mờ
+                y: -50, 
+                size: Math.random() * 25 + 10, 
+                speedY: Math.random() * 3 + 1.5, 
+                speedX: (Math.random() - 0.5) * 3, 
+                opacity: Math.random() * 0.5 + 0.3, 
                 rotation: Math.random() * Math.PI * 2,
-                rotationSpeed: (Math.random() - 0.5) * 0.05, // Tự xoay khi rơi
+                rotationSpeed: (Math.random() - 0.5) * 0.05, 
                 color: colors[Math.floor(Math.random() * colors.length)]
             };
         }
@@ -325,17 +330,43 @@
 
             // TEXT CONTENT
             ctx.textAlign = 'center';
-            ctx.fillStyle = COLORS.darkText;
-
+            
             // Save the date
             ctx.font = '400 60px "Cinzel"';
             ctx.fillStyle = COLORS.gold;
-            ctx.fillText('SAVE THE DATE', REAL_WIDTH / 2, 500);
+            ctx.fillText('SAVE THE DATE', REAL_WIDTH / 2, 380);
 
             // Lời mời
             ctx.font = '300 50px "Montserrat"';
             ctx.fillStyle = '#666';
-            ctx.fillText('Trân trọng báo tin vui lễ thành hôn của', REAL_WIDTH / 2, 650);
+            ctx.fillText('Trân trọng báo tin vui lễ thành hôn của', REAL_WIDTH / 2, 500);
+
+            // VẼ ẢNH THUMBNAIL Ở ĐÂY
+            if (isImageLoaded) {
+                ctx.save();
+                const imgX = REAL_WIDTH / 2;
+                const imgY = 820; // Vị trí Y của ảnh
+                const radius = 180; // Bán kính ảnh
+                
+                // Vẽ viền trang trí ngoài
+                ctx.beginPath();
+                ctx.arc(imgX, imgY, radius + 15, 0, Math.PI * 2);
+                ctx.strokeStyle = COLORS.gold;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Tạo mask bo tròn cho ảnh
+                ctx.beginPath();
+                ctx.arc(imgX, imgY, radius, 0, Math.PI * 2);
+                ctx.clip();
+                
+                // Tính toán tỷ lệ để crop ảnh vừa khung hình tròn
+                const scale = Math.max((radius * 2) / coupleImage.width, (radius * 2) / coupleImage.height);
+                const drawWidth = coupleImage.width * scale;
+                const drawHeight = coupleImage.height * scale;
+                ctx.drawImage(coupleImage, imgX - drawWidth/2, imgY - drawHeight/2, drawWidth, drawHeight);
+                ctx.restore();
+            }
 
             // TÊN CÔ DÂU CHÚ RỂ
             ctx.font = '400 220px "Great Vibes"';
@@ -346,20 +377,20 @@
             ctx.shadowOffsetX = 5;
             ctx.shadowOffsetY = 5;
 
-            ctx.fillText('Trường An', REAL_WIDTH / 2, 950);
+            ctx.fillText('Trường An', REAL_WIDTH / 2, 1250);
             
             ctx.font = '300 80px "Cinzel"';
-            ctx.fillText('&', REAL_WIDTH / 2, 1100);
+            ctx.fillText('&', REAL_WIDTH / 2, 1400);
             
             ctx.font = '400 220px "Great Vibes"';
-            ctx.fillText('Ý Nhi', REAL_WIDTH / 2, 1350);
+            ctx.fillText('Ý Nhi', REAL_WIDTH / 2, 1600);
 
             ctx.shadowColor = "transparent";
 
             // Đường kẻ ngang
             ctx.beginPath();
-            ctx.moveTo(REAL_WIDTH/2 - 200, 1500);
-            ctx.lineTo(REAL_WIDTH/2 + 200, 1500);
+            ctx.moveTo(REAL_WIDTH/2 - 200, 1720);
+            ctx.lineTo(REAL_WIDTH/2 + 200, 1720);
             ctx.strokeStyle = COLORS.gold;
             ctx.lineWidth = 3;
             ctx.stroke();
@@ -367,57 +398,46 @@
             // Ngày tháng
             ctx.font = '600 50px "Montserrat"';
             ctx.fillStyle = COLORS.gold;
-            ctx.fillText('CHÚNG TÔI KẾT HÔN VÀO', REAL_WIDTH / 2, 1650);
+            ctx.fillText('CHÚNG TÔI KẾT HÔN VÀO', REAL_WIDTH / 2, 1850);
 
             // Big Date
             ctx.font = '600 180px "Cinzel"';
             ctx.fillStyle = COLORS.darkText;
-            ctx.fillText('10 . 10 . 2026', REAL_WIDTH / 2, 1850);
+            ctx.fillText('10 . 10 . 2026', REAL_WIDTH / 2, 2050);
             
             ctx.font = '400 60px "Cinzel"';
-            ctx.fillText('THỨ BẢY', REAL_WIDTH / 2, 1950);
+            ctx.fillText('THỨ BẢY', REAL_WIDTH / 2, 2170);
 
             // Địa điểm
             ctx.font = 'italic 50px "Montserrat"';
             ctx.fillStyle = '#666';
-            ctx.fillText('Tại tư gia & Trung tâm tiệc cưới', REAL_WIDTH / 2, 2200);
-            ctx.fillText('Rất hân hạnh được đón tiếp', REAL_WIDTH / 2, 2300);
+            ctx.fillText('Tại tư gia & Trung tâm tiệc cưới', REAL_WIDTH / 2, 2350);
+            ctx.fillText('Rất hân hạnh được đón tiếp', REAL_WIDTH / 2, 2450);
         }
 
         // Hàm vẽ họa tiết tim nền cho phong bì
         function drawEnvelopePattern(ctx) {
             ctx.save();
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Màu trắng mờ
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; 
             
-            const spacing = 150; // Khoảng cách giữa các tim
-            const offsetX = 75; // So le
+            const spacing = 150; 
+            const offsetX = 75; 
             
             for (let y = 0; y < REAL_HEIGHT; y += spacing) {
                 for (let x = 0; x < REAL_WIDTH; x += spacing) {
-                    // Tạo hiệu ứng so le hàng chẵn/lẻ
                     let drawX = x;
                     if ((y / spacing) % 2 === 0) {
                         drawX += offsetX;
                     }
                     
-                    // Vẽ tim nhỏ
                     ctx.save();
                     ctx.translate(drawX, y);
-                    ctx.rotate(Math.PI / 4); // Xoay nhẹ nếu muốn, ở đây để mặc định xoay trong hàm drawHeartShape nếu cần, nhưng drawHeartShape của chúng ta đã có rotate
-                    // Gọi hàm vẽ tim có sẵn (chỉnh size nhỏ)
-                    // Lưu ý hàm drawHeartShape nhận tham số rotation, ta để 0
-                    
-                    // Ta vẽ thủ công lại 1 tim đơn giản ở đây để tối ưu hoặc dùng hàm có sẵn
-                    // Dùng hàm có sẵn nhưng phải cẩn thận translate
-                    
-                    // Vẽ tim thủ công cho nhanh và nhẹ
                     ctx.beginPath();
                     const size = 15;
                     ctx.moveTo(0, -size/2); 
                     ctx.bezierCurveTo(-size/2, -size, -size, -size/3, 0, size);
                     ctx.bezierCurveTo(size, -size/3, size/2, -size, 0, -size/2);
                     ctx.fill();
-                    
                     ctx.restore();
                 }
             }
@@ -431,53 +451,50 @@
             ctx.save();
             ctx.globalAlpha = coverOpacity;
 
-            // 1. Vẽ nền tổng thể (để lấp kín các khe hở nếu có)
+            // Nền tổng thể
             ctx.fillStyle = COLORS.envelope;
             ctx.fillRect(0, 0, REAL_WIDTH, REAL_HEIGHT);
             
-            // 2. Vẽ họa tiết trái tim chìm lên toàn bộ nền trước khi vẽ các nếp gấp
             drawEnvelopePattern(ctx);
-
-            // 3. Vẽ các nếp gấp (Flaps) với các sắc độ hồng khác nhau để tạo khối
             
-            // Nếp gấp trên (Top Flap) - Màu đậm hơn chút để tạo bóng đổ xuống
+            // Nếp gấp trên (Top Flap)
             ctx.beginPath();
             ctx.moveTo(0, 0);
             ctx.lineTo(REAL_WIDTH, 0);
             ctx.lineTo(REAL_WIDTH / 2, REAL_HEIGHT * 0.4);
             ctx.closePath();
-            ctx.fillStyle = COLORS.envelopeDark; // Hồng đậm hơn
+            ctx.fillStyle = COLORS.envelopeDark;
             ctx.fill();
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Nếp gấp dưới (Bottom Flap) - Màu trung tính
+            // Nếp gấp dưới (Bottom Flap)
             ctx.beginPath();
             ctx.moveTo(0, REAL_HEIGHT);
             ctx.lineTo(REAL_WIDTH, REAL_HEIGHT);
             ctx.lineTo(REAL_WIDTH / 2, REAL_HEIGHT * 0.45);
             ctx.closePath();
-            ctx.fillStyle = '#F2C6CF'; // Hồng sắc độ khác
+            ctx.fillStyle = '#F2C6CF'; 
             ctx.fill();
             ctx.stroke();
 
-            // Nếp gấp trái (Left Flap) - Màu sáng
+            // Nếp gấp trái (Left Flap)
             ctx.beginPath();
             ctx.moveTo(0, 0);
             ctx.lineTo(0, REAL_HEIGHT);
             ctx.lineTo(REAL_WIDTH / 2, REAL_HEIGHT * 0.45);
             ctx.closePath();
-            ctx.fillStyle = COLORS.envelopeLight; // Hồng nhạt
+            ctx.fillStyle = COLORS.envelopeLight;
             ctx.fill();
 
-            // Nếp gấp phải (Right Flap) - Màu sáng
+            // Nếp gấp phải (Right Flap)
             ctx.beginPath();
             ctx.moveTo(REAL_WIDTH, 0);
             ctx.lineTo(REAL_WIDTH, REAL_HEIGHT);
             ctx.lineTo(REAL_WIDTH / 2, REAL_HEIGHT * 0.45);
             ctx.closePath();
-            ctx.fillStyle = COLORS.envelopeLight; // Hồng nhạt
+            ctx.fillStyle = COLORS.envelopeLight;
             ctx.fill();
 
             // Con dấu sáp
@@ -511,16 +528,12 @@
         // Vòng lặp vẽ chính
         function render() {
             ctx.clearRect(0, 0, REAL_WIDTH, REAL_HEIGHT);
-            
-            // 1. Vẽ thiệp bên trong
             drawCardContent();
 
-            // 2. Vẽ Mưa Tim
             if (isRainingHearts) {
                 updateAndDrawFallingHearts();
             }
 
-            // 3. Vẽ phong bì
             drawEnvelope();
         }
 
@@ -530,9 +543,7 @@
             
             // --- PHÁT NHẠC ---
             const audio = document.getElementById('weddingMusic');
-            // Cài đặt âm lượng vừa phải
             audio.volume = 0.5; 
-            // Bắt lỗi nếu trình duyệt chặn autoplay (thường sẽ ok vì có click user)
             audio.play().catch(e => {
                 console.log("Không thể phát nhạc tự động: ", e);
             });
@@ -590,6 +601,3 @@
     </script>
 </body>
 </html>
-
-
-
